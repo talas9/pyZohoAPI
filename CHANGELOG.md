@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [v1.0.0](https://github.com/tdesposito/pyZohoAPI/releases/tag/v1.1.0) - 2024-05-25
+
+### Added
+- Add publishing workflow ([e911ecd](https://github.com/tdesposito/pyZohoAPI/commit/e911ecd79ecfa4acc1145257e47dfe3a8501266b) by Todd Esposito).
+- Add books support ([7fc56a3](https://github.com/tdesposito/pyZohoAPI/commit/7fc56a3a8ae9c481bb962d627daa028a43f76cac) by Todd Esposito).
+
 ## [v0.10.0](https://github.com/tdesposito/pyZohoAPI/releases/tag/v0.10.0) - 2022-01-17
 
 <small>[Compare with v0.9.1](https://github.com/tdesposito/pyZohoAPI/compare/v0.9.1...v0.10.0)</small>
