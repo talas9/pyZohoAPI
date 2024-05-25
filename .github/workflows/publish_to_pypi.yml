@@ -1,0 +1,33 @@
+name: Publish to PyPI
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
+
+concurrency: 
+  group: publish
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out source repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+
+    - name: Build and Publish
+      env:
+        PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+      run: |
+        poetry build
+        poetry publish --username __token__ --password $PYPI_TOKEN
