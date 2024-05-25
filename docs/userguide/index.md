@@ -3,6 +3,7 @@
 ## Short Version
 
 Create an API Object for the product(s) you want to access:
+
 ```{code-block} python
 from pyzohoapi import *
 from my_private_data import org_id, my_api_tokens_dict
@@ -11,12 +12,14 @@ inventory = ZohoInventory(org_id, "US", **my_api_tokens_dict)
 ```
 
 Find existing things in Zoho:
+
 ```{code-block} python
 customer = inventory.Contact(email="customer@example.com").First()
 items = inventory.Item(search_text="product type")
 ```
 
 Then make a new thing in Zoho:
+
 ```{code-block} python
 invoice = inventory.Invoice()
 invoice.customer_id = customer.ID
@@ -32,11 +35,13 @@ if invoice.ID:
 ```
 
 Then do a thing with a thing in Zoho:
+
 ```{code-block} python
 invoice.Approve()
 ```
 
 ## A Note on PEP8-Compliance
+
 Yes, I know, my method/property names aren't PEP8-compliant. This is
 intentional.
 
@@ -55,6 +60,7 @@ objects.
 On the brighter side, the internals are PEP8ie.
 
 ## Long Version
+
 ```{toctree}
 apiobject
 zohoobject

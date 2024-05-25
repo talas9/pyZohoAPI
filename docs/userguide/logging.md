@@ -3,6 +3,7 @@
 We register a standard Python `Logger` named `pyzohoapi`.
 
 ## Configuring Logging
+
 Our logger only emits **DEBUG**-level LogRecords; in order to get these messages
 into your application's logs, use, for example:
 
@@ -18,6 +19,7 @@ logging.getLogger('urllib3.connectionpool').setLevel(logging.INFO)
 ```
 
 ## Activity we log
+
 We emit `LogRecords` when we:
 
 * request a new access token

@@ -2,14 +2,13 @@
 # Distributed under the MIT License (see http://opensource.org/licenses/MIT).
 
 from .core import ZohoAPIBase
-from .exceptions import ZohoException
 from . import objecttypes
 
 class ZohoBooks(ZohoAPIBase):
     _scope = "ZohoBooks.FullAccess.all"
 
     def get_endpoint(self, region):
-        return f"https://books.zoho.{self._regionmap[region]}/api/v3"
+        return f"https://www.zohoapis.{self._regionmap[region]}/books/v3"
 
     def Account(self, *args, **kwargs): return objecttypes.Account(self, *args, **kwargs)
     def CompositeItem(self, *args, **kwargs): return objecttypes.CompositeItem(self, *args, **kwargs)

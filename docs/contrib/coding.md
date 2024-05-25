@@ -8,8 +8,8 @@ The Repository has four sub-directories of note:
 * `pyzohoapi` - Contains the module code
 * `tests` - Contains the unit and functional tests
 * `tools` - Contains [tools to help in development](setup.md#helpful-dev-and-debug-tools)
-    * `interactive-test-server.py` is a simple web interface for interrogating the Zoho APIs
-    * `test-shell.py` starts up a python REPL shell with the API Objects preloaded
+  * `interactive-test-server.py` is a simple web interface for interrogating the Zoho APIs
+  * `test-shell.py` starts up a python REPL shell with the API Objects preloaded
 
 ## Code Style
 
@@ -21,16 +21,19 @@ with Zoho-surfaced object fields. This should only apply to ZohoObjects; all
 others should follow PEP8.
 
 In short:
+
 * Indention is 4 spaces, not tabs
 * method_names_look_like_this _except for in ZohoObject classes_
 * ClassNamesLookLikeThis
 
 ## Classes
+
 _ZohoObject_ classes represent particular objects exposed by the API.
 
 _ZohoAPI_ classes connect to particular API endpoints.
 
 ## Adding new ZohoObject Classes
+
 We'll use [Zoho Inventory API](https://www.zoho.com/inventory/api/v1/) as an
 example in this section.
 
@@ -41,6 +44,7 @@ use any of the various API client tools available to test the API directly. See
 ```
 
 ### Examine the API Request and Response
+
 Let's consider Zoho **Composite Items**:
 
 We see that to retrieve a list of **Composite Items**, we call:
@@ -48,6 +52,7 @@ We see that to retrieve a list of **Composite Items**, we call:
 `get /compositeitems`
 
 The JSON we get back looks like:
+
 ```{code-block} json
 :emphasize-lines: 4, 6
 {
@@ -63,6 +68,7 @@ If we retrive a particular **Composite Item** with:
 `get /compositeitems/9999999000001049029`
 
 we'll get:
+
 ```{code-block} json
 :emphasize-lines: 4, 5
 {
@@ -71,7 +77,9 @@ we'll get:
     "composite_item": {
         "composite_item_id": "9999999000001049029",
 ```
+
 So we see that:
+
 * The object type (as defined by Zoho) is "Composite Items".
 * The Python class name should be **CompositeItem** (singular).
 * The URL fragment is `compositeitems` (plural). This is the pluralized, lowercase version of the class name.
@@ -84,8 +92,10 @@ _Create_, _Retrieve_, _Update_, _Delete_ and _List All_ operations, we can also
 perform _Mark as Active_ and _Mark as Inactive_ operations.
 
 ### Add the class
+
 ZohoObject classes are created by the `ZohoObjectFactory()` function
 in `pyzohoapi/objecttypes/__init__.py`. In this case, we use:
+
 ```{code-block} python
 CompositeItem = ZohoObjectFactory("CompositeItem",
     responseKey="composite_item", idKey="composite_item_id",
@@ -99,6 +109,7 @@ CompositeItem = ZohoObjectFactory("CompositeItem",
 * _mixins=[HasActivate]_ adds the `Activate()` and `Deactivate()` operations by way of a mixin in `pyzohoapi.objecttypes.mixins`; keep reading for how that works.
 
 ## Extending ZohoObject Classes
+
 The `pyzohoapi.objecttypes.mixins` module contains classes which expose one
 or more additional methods to add to particular object types. In the example
 above, we've mixed in `HasActivate` class, which adds the `Activate()` and
@@ -106,6 +117,7 @@ above, we've mixed in `HasActivate` class, which adds the `Activate()` and
 Methods](/objrefs/methods.md) for the breakdown of the existing methods.
 
 ### Examine the API Docs
+
 We'll look at the existing mixin `HasActivate` as an example.
 
 Looking at the API Docs, we see that there are several different Zoho objects
@@ -121,19 +133,23 @@ the `post` to Zoho, and methods to expose both operations. This class, then, can
 be applied to the appropriate object types.
 
 ### Create a Mixin Class
+
 ```{code-block} python
 class HasActivate:
     ...
 ```
+
 The pattern for the class name is `Has{Feature}`.
 
 ### Create Internal Method(s)
+
 ```{code-block} python
 :emphasize-lines: 2
 class HasActivate:
     def _do_operation(self, status, funcname):
         ...
 ```
+
 This is optional, but since in this case there are two, basically identical,
 operations we want to expose, we'll build an internal method to actually perform
 the operation.
@@ -145,6 +161,7 @@ In this case, we need the new status ('active' or 'inactive', per the API docs),
 and the name of the function being called (for exceptions).
 
 ### Ensure the Operation is Valid
+
 ```{code-block} python
 :emphasize-lines: 3, 5
 class HasActivate:
@@ -153,11 +170,13 @@ class HasActivate:
             ...
         raise ZohoInvalidOpError(funcname, self)
 ```
+
 This operation is only valid on single objects (they have an `_id`) and which
 already exist (they have `_data`). If those conditions aren't met, we'll raise a
 `ZohoInvalidOpError`.
 
 ### Perform the API Call
+
 ```{code-block} python
 :emphasize-lines: 4-9
 class HasActivate:
@@ -171,6 +190,7 @@ class HasActivate:
               return False
       raise ZohoInvalidOpError(funcname, self)
 ```
+
 In order to `post` to the API, we use the API object's `post()` method. We have
 to tell `post()` where to post to, which is what our `_url_fragment()` functions
 does. It constructs the object-specific portion of the eventual URL with our
@@ -181,6 +201,7 @@ in the `extraPath` parameter. The API object takes care of the
 In this case, if `post()` raises an exception, we suppress it and return `False`.
 
 ### Create Public Method(s)
+
 ```{code-block} python
 :emphasize-lines: 3-7
 class HasActivate:
@@ -191,15 +212,20 @@ class HasActivate:
     def Deactivate(self):
         return self._do_operation('inactive', "Deactivate")
 ```
+
 Public Method names should be CamelCase, for reasons noted elsewhere. Parameters
 are operation-specific.
 
 ## Adding a New API Object
+
 ### Create a Module for the API
+
 See `pyzohoapi/inventory.py` as an example.
 
 ### Define the Class
+
 Inherit from `ZohoAPIBase`.
+
 ```{code-block} python
 from .core import ZohoAPIBase
 ...
@@ -207,6 +233,7 @@ class ZohoInventory(ZohoAPIBase):
 ```
 
 ### Set the OAuth Scope
+
 ```{code-block} python
 :emphasize-lines: 4
 from .core import ZohoAPIBase
@@ -216,11 +243,14 @@ class ZohoInventory(ZohoAPIBase):
 ```
 
 ### (Optional) Determine Available Regions
+
 Override the `_regionmap` member if the API isn't available in every Zoho data
 center. See the code for `ZohoAPIBase` for a guidance.
 
 ### Write `get_endpoint()`
+
 The `get_endpoint()` method returns the endpoint of the api.
+
 ```{code-block} python
 :emphasize-lines: 6-7
 from .core import ZohoAPIBase
@@ -233,6 +263,7 @@ class ZohoInventory(ZohoAPIBase):
 ```
 
 ### Expose Available ZohoObjects
+
 ```{code-block} python
 :emphasize-lines: 2, 10-12
 from .core import ZohoAPIBase
@@ -248,8 +279,11 @@ class ZohoInventory(ZohoAPIBase):
     def Bundle(self, *args, **kwargs): return objecttypes.Bundle(self, *args, **kwargs)
     ...
 ```
+
 ### Expose the module
+
 In `pyzohoapi.__init__.py`, import the module and add it to the `__all__` list.
+
 ```{code-block} python
 from .inventory import ZohoInventory
 __all__ = ["ZohoInventory", ...]

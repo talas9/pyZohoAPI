@@ -6,9 +6,9 @@ import datetime
 
 import pytest
 
-from pyzohoapi import __version__, ZohoInventory
+from pyzohoapi import ZohoInventory
 from pyzohoapi.core import ZohoAPIBase
-from pyzohoapi.exceptions import *
+from pyzohoapi.exceptions import ZohoInsufficientAuthKeys, ZohoUnknownRegionException
 
 from private import testdata
 
@@ -22,7 +22,7 @@ def test_api_expired_access_token():
     del tokens['client_id']
     del tokens['client_secret']
     z = ZohoAPIBase(testdata['orgid'], testdata['region'], **tokens)
-    with pytest.raises(ZohoInsufficentAuthKeys):
+    with pytest.raises(ZohoInsufficientAuthKeys):
         z.auth_header()
 
 def test_api_invalid_access_token():

@@ -8,7 +8,7 @@ class ZohoInventory(ZohoAPIBase):
     _scope = "ZohoInventory.FullAccess.all"
 
     def get_endpoint(self, region):
-        return f"https://inventory.zoho.{self._regionmap[region]}/api/v1"
+        return f"https://www.zohoapis.{self._regionmap[region]}/inventory/v1"
 
     def Account(self, *args, **kwargs): return objecttypes.Account(self, *args, **kwargs)
     def Bill(self, *args, **kwargs): return objecttypes.Bill(self, *args, **kwargs)

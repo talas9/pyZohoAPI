@@ -1,7 +1,7 @@
 # This file is part of pyZohoAPI, Copyright (C) Todd D. Esposito 2021.
 # Distributed under the MIT License (see https://opensource.org/licenses/MIT).
 
-from ...exceptions import *
+from ...exceptions import ZohoException, ZohoInvalidOpError
 
 from .CompositeItemOps import HasBundle
 from .CustomFields import HasCustomFields

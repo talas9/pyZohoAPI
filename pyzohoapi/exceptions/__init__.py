@@ -13,7 +13,7 @@ class ZohoAuthRefreshFailure(ZohoException):
         super().__init__("Unable to refresh access token")
 
 
-class ZohoInsufficentAuthKeys(ZohoException):
+class ZohoInsufficientAuthKeys(ZohoException):
     def __init__(self):
         super().__init__("Unable to generate Authorization header")
 

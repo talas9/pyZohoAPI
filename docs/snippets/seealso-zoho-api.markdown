@@ -4,4 +4,5 @@ each object.
 
 * [Books API](<https://www.zoho.com/books/api/v3/>)
 * [Inventory API](<https://www.zoho.com/inventory/api/v1>)
+* [Invoice API](https://www.zoho.com/invoice/api/v3/)
 ```

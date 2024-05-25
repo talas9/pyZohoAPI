@@ -10,20 +10,30 @@ import simplejson
 
 from .collection import DottedDict, DottedList
 from .utils import diff
-from ..exceptions import *
+from ..exceptions import ZohoAPICallsExceeded, ZohoAPIThrottled, ZohoAuthRefreshFailure, ZohoBadRequest, ZohoException, ZohoInsufficientAuthKeys, ZohoInvalidOpError, ZohoMethodNotAllowed, ZohoNotFound, ZohoUnauthorized, ZohoUnknownRegionException
 
 logging.getLogger('pyzohoapi').addHandler(logging.NullHandler())
 
 class ZohoAPIBase:
     _regionmap = {
-        'australia': "com.au",
-        'com.au': "com.au",
+        # US
+        'us': "com",
         'com': "com",
-        'eu': "eu",
-        'europe': "eu",
+        # India
         'in': "in",
         'india': "in",
-        'us': "com",
+        # Europe
+        'eu': "eu",
+        'europe': "eu",
+        # Japan
+        "jp": "jp",
+        "japan": "jp",
+        # Canada
+        "cn": "com.cn",
+        "canada": "com.cn",
+        # Australia
+        'australia': "com.au",
+        'com.au': "com.au",
     }
     def __init__(self, organization_id, region="us", **apiArgs):
         """ Constructor
@@ -67,8 +77,8 @@ class ZohoAPIBase:
         """ Returns the authorization header, refreshing the access_token as needed.
 
         :return: {'Authorization': '... access token ...'}
-        :raises ZohoAuthRefreshFailure: if a refresh attemp fails.
-        :raises ZohoInsufficentAuthKeys: if we don't have enough info to refresh.
+        :raises ZohoAuthRefreshFailure: if a refresh attempt fails.
+        :raises ZohoInsufficientAuthKeys: if we don't have enough info to refresh.
         """
         if self._api_keys.get('access_token') and self._api_keys['AccessExpiresAt'] > datetime.datetime.now().timestamp():
             return {'Authorization': f"Zoho-oauthtoken {self._api_keys['access_token']}"}
@@ -85,7 +95,7 @@ class ZohoAPIBase:
                 self.update_tokens(rsp.json())
                 return {'Authorization': f"Zoho-oauthtoken {self._api_keys['access_token']}"}
             raise ZohoAuthRefreshFailure()
-        raise ZohoInsufficentAuthKeys()
+        raise ZohoInsufficientAuthKeys()
 
     def do_request(self, requestFunc, url, body=None, files=None):
         if self._api_keys['min_calls_remaining'] >= int(self._ratelimit['remaining']):
@@ -235,7 +245,7 @@ class ZohoObjectBase:
         if id or {k:v for k,v in searchParams.items() if isinstance(v, str)}:
             try:
                 self._load(id=id, **searchParams)
-            except ZohoNotFound as e:
+            except ZohoNotFound:
                 pass    # not found, but no need to raise this error.
 
     def __iter__(self):
@@ -347,13 +357,15 @@ class ZohoObjectBase:
 
         :return: a ZohoObject
         """
-        if self._data == None:
+        if self._data is None:
             # We were a "new" object, but need to become a list-of
             self._load()
         if isinstance(self._data, DottedList) and len(self._data):
             if kwargs:
                 rval = None
-                for _ in self.Iter(raw=True, **kwargs): rval = _; break;
+                for _ in self.Iter(raw=True, **kwargs):
+                    rval = _
+                    break
                 if rval:
                     return self.__class__(self._api, rval[self._id_field])
             else:

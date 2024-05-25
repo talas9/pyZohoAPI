@@ -38,6 +38,5 @@ class HasBundle:
                 if warehouse_id:
                     bundle_line['warehouse_id'] = warehouse_id
                 bundle.line_items.append(bundle_line)
-
             return bundle.Create()
         raise ZohoInvalidOpError('MakeBundle', self)
