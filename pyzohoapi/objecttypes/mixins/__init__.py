@@ -10,7 +10,7 @@ __all__ = [
     'HasActivate',
     'HasAddresses',
     'HasBundle',
-    'HasConfirm', 'HasDraft', 'HasVoid', 'HasDelivered',
+    'HasConfirm', 'HasDraft', 'HasVoid', 'HasSent', 'HasDelivered',
     'HasCustomFields',
     'HasImage',
 ]
