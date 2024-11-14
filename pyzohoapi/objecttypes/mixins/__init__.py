@@ -95,6 +95,13 @@ class HasVoid(_HasStatus):
             raise ZohoInvalidOpError("Void", self)
         return self._mark('void')
 
+class HasSent(_HasStatus):
+    """Adds `Sent()`"""
+    def Sent(self):
+        if not self._id:
+            raise ZohoInvalidOpError("Sent", self)
+        return self._mark('sent')
+
 
 class _HasAspect:
     def _updateAspect(self, aspect, aspect_id, data):

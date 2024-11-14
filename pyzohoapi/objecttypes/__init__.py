@@ -3,7 +3,7 @@
 
 from pyzohoapi.objecttypes.mixins.CompositeItemOps import HasBundle
 from ..core import ZohoObjectBase
-from .mixins import HasActivate, HasAddresses, HasConfirm, HasCustomFields, HasDelivered, HasDraft, HasImage, HasVoid
+from .mixins import HasActivate, HasAddresses, HasConfirm, HasCustomFields, HasDelivered, HasDraft, HasImage, HasVoid, HasSent
 
 
 def ZohoObjectFactory(name,
@@ -55,7 +55,7 @@ Currency = ZohoObjectFactory("Currency", urlPath="settings/currencies",
 CustomerPayment = ZohoObjectFactory("CustomerPayment",
     idKey="payment_id", numberKey="payment_number", mixins=[HasCustomFields])
 Document = ZohoObjectFactory("Document", raw=True)
-Invoice = ZohoObjectFactory("Invoice", mixins=[HasCustomFields])
+Invoice = ZohoObjectFactory("Invoice", mixins=[HasCustomFields, HasDraft, HasVoid, HasSent])
 Item = ZohoObjectFactory("Item", mixins=[HasActivate, HasCustomFields, HasImage])
 ItemAdjustment = ZohoObjectFactory("ItemAdjustment",
     urlPath="inventoryadjustments", responseKey="inventory_adjustment",
